@@ -1,0 +1,205 @@
+Region,EBF_Rate,Year,Type,Education,Age_Month,Wealth_Index,Child_Sex
+BARMM,78.9,2017,Rural,No Education,0,Poorest,Female
+BARMM,81.8,2017,Rural,High School,1,Poorest,Male
+BARMM,62.5,2017,Rural,No Education,2,Poorest,Male
+BARMM,61.5,2017,Rural,High School,3,Poorest,Male
+BARMM,55.6,2017,Rural,Elementary,4,Poorest,Male
+BARMM,31.2,2017,Rural,Elementary,5,Poorest,Female
+CAR,93.8,2017,Rural,College,0,Richest,Female
+CAR,82.4,2017,Rural,College,1,Middle,Female
+CAR,84.2,2017,Rural,College,2,Richer,Male
+CAR,64.7,2017,Rural,College,3,Richest,Female
+CAR,37.5,2017,Rural,College,4,Poorer,Male
+CAR,40.0,2017,Rural,High School,5,Middle,Male
+Caraga,79.2,2017,Rural,High School,0,Poorest,Female
+Caraga,83.3,2017,Rural,High School,1,Middle,Male
+Caraga,75.0,2017,Rural,High School,2,Poorer,Female
+Caraga,65.0,2017,Urban,High School,3,Poorer,Male
+Caraga,28.6,2017,Rural,High School,4,Richer,Male
+Caraga,23.8,2017,Rural,High School,5,Poorer,Female
+MIMAROPA,79.2,2017,Rural,High School,0,Poorest,Male
+MIMAROPA,80.0,2017,Rural,High School,1,Poorest,Female
+MIMAROPA,78.3,2017,Rural,High School,2,Middle,Male
+MIMAROPA,75.0,2017,Rural,High School,3,Poorest,Female
+MIMAROPA,47.4,2017,Rural,High School,4,Poorer,Male
+MIMAROPA,23.5,2017,Rural,High School,5,Poorer,Female
+NCR,72.7,2017,Urban,High School,0,Poorer,Female
+NCR,72.2,2017,Urban,High School,1,Poorest,Male
+NCR,56.7,2017,Urban,High School,2,Poorest,Female
+NCR,38.9,2017,Urban,High School,3,Poorer,Male
+NCR,27.3,2017,Urban,High School,4,Poorest,Male
+NCR,10.0,2017,Urban,College,5,Richest,Female
+Region I,76.5,2017,Rural,High School,0,Middle,Female
+Region I,87.0,2017,Rural,High School,1,Poorest,Male
+Region I,58.3,2017,Rural,High School,2,Poorer,Female
+Region I,47.4,2017,Rural,High School,3,Middle,Female
+Region I,33.3,2017,Rural,High School,4,Richest,Female
+Region I,9.1,2017,Rural,High School,5,Poorer,Male
+Region II,82.6,2017,Rural,College,0,Middle,Female
+Region II,75.0,2017,Rural,High School,1,Middle,Female
+Region II,70.6,2017,Rural,High School,2,Poorest,Male
+Region II,73.3,2017,Rural,College,3,Richer,Male
+Region II,61.1,2017,Rural,High School,4,Richer,Female
+Region II,41.2,2017,Rural,High School,5,Richest,Female
+Region III,78.3,2017,Rural,High School,0,Poorer,Male
+Region III,70.0,2017,Urban,High School,1,Poorer,Male
+Region III,57.1,2017,Rural,High School,2,Poorest,Female
+Region III,45.2,2017,Rural,College,3,Richest,Male
+Region III,36.4,2017,Rural,High School,4,Middle,Female
+Region III,26.5,2017,Urban,High School,5,Poorer,Male
+Region IV-A,75.9,2017,Urban,High School,0,Poorest,Female
+Region IV-A,59.3,2017,Urban,High School,1,Poorest,Female
+Region IV-A,69.0,2017,Urban,High School,2,Poorer,Female
+Region IV-A,46.7,2017,Urban,High School,3,Poorest,Female
+Region IV-A,26.7,2017,Rural,High School,4,Poorest,Female
+Region IV-A,20.0,2017,Rural,High School,5,Poorest,Male
+Region IX,68.2,2017,Rural,High School,0,Poorer,Male
+Region IX,65.2,2017,Rural,High School,1,Poorest,Female
+Region IX,62.5,2017,Rural,High School,2,Poorest,Female
+Region IX,54.2,2017,Rural,Elementary,3,Poorest,Female
+Region IX,36.4,2017,Rural,High School,4,Poorest,Female
+Region IX,33.3,2017,Rural,High School,5,Middle,Female
+Region V,82.1,2017,Rural,High School,0,Poorest,Female
+Region V,72.4,2017,Rural,High School,1,Poorest,Male
+Region V,58.3,2017,Rural,High School,2,Poorer,Male
+Region V,52.2,2017,Rural,High School,3,Middle,Female
+Region V,38.5,2017,Rural,High School,4,Middle,Male
+Region V,31.2,2017,Rural,High School,5,Poorest,Male
+Region VI,90.5,2017,Rural,High School,0,Poorer,Male
+Region VI,79.2,2017,Rural,College,1,Richest,Male
+Region VI,65.4,2017,Rural,High School,2,Richer,Male
+Region VI,70.6,2017,Rural,College,3,Richer,Female
+Region VI,52.2,2017,Rural,High School,4,Poorer,Female
+Region VI,16.7,2017,Rural,High School,5,Poorest,Female
+Region VII,83.9,2017,Rural,High School,0,Poorer,Male
+Region VII,70.6,2017,Rural,High School,1,Poorer,Male
+Region VII,65.6,2017,Rural,High School,2,Poorer,Female
+Region VII,44.8,2017,Urban,College,3,Middle,Female
+Region VII,56.7,2017,Rural,High School,4,Poorest,Male
+Region VII,17.2,2017,Rural,High School,5,Middle,Male
+Region VIII,88.9,2017,Rural,College,0,Middle,Female
+Region VIII,80.0,2017,Rural,High School,1,Richest,Male
+Region VIII,68.0,2017,Rural,High School,2,Poorest,Female
+Region VIII,66.7,2017,Rural,High School,3,Poorest,Female
+Region VIII,33.3,2017,Rural,High School,4,Middle,Male
+Region VIII,33.3,2017,Rural,High School,5,Middle,Female
+Region X,91.3,2017,Rural,High School,0,Poorest,Female
+Region X,69.6,2017,Rural,High School,1,Richer,Female
+Region X,80.0,2017,Rural,High School,2,Middle,Female
+Region X,42.1,2017,Rural,High School,3,Poorer,Male
+Region X,26.7,2017,Urban,College,4,Middle,Female
+Region X,42.9,2017,Rural,High School,5,Richer,Male
+Region XI,63.6,2017,Rural,High School,0,Richest,Male
+Region XI,76.5,2017,Rural,High School,1,Middle,Male
+Region XI,75.0,2017,Rural,High School,2,Poorest,Female
+Region XI,43.8,2017,Rural,College,3,Richest,Female
+Region XI,40.0,2017,Rural,College,4,Richest,Male
+Region XI,21.1,2017,Rural,High School,5,Poorest,Female
+Region XII,80.0,2017,Rural,High School,0,Poorest,Male
+Region XII,73.1,2017,Rural,High School,1,Poorer,Female
+Region XII,61.9,2017,Rural,High School,2,Poorest,Female
+Region XII,56.5,2017,Rural,High School,3,Poorer,Male
+Region XII,45.8,2017,Rural,High School,4,Poorer,Male
+Region XII,36.4,2017,Rural,High School,5,Poorest,Male
+BARMM,76.5,2022,Rural,College,0,Richest,Female
+BARMM,72.7,2022,Rural,High School,1,Poorest,Female
+BARMM,62.5,2022,Rural,High School,2,Poorest,Male
+BARMM,47.8,2022,Rural,College,3,Richer,Female
+BARMM,38.9,2022,Rural,High School,4,Poorest,Female
+BARMM,18.8,2022,Rural,High School,5,Poorest,Female
+CAR,85.0,2022,Rural,High School,0,Richer,Male
+CAR,80.0,2022,Rural,High School,1,Richer,Male
+CAR,52.9,2022,Rural,College,2,Richer,Female
+CAR,50.0,2022,Rural,College,3,Richest,Female
+CAR,46.7,2022,Rural,High School,4,Richest,Male
+CAR,31.2,2022,Rural,High School,5,Richest,Female
+Caraga,90.5,2022,Rural,High School,0,Poorer,Female
+Caraga,70.6,2022,Rural,College,1,Middle,Female
+Caraga,65.2,2022,Rural,High School,2,Poorer,Female
+Caraga,66.7,2022,Rural,High School,3,Poorest,Male
+Caraga,35.0,2022,Rural,High School,4,Richer,Female
+Caraga,33.3,2022,Rural,College,5,Middle,Male
+MIMAROPA,88.2,2022,Rural,High School,0,Poorest,Male
+MIMAROPA,79.2,2022,Rural,High School,1,Poorest,Female
+MIMAROPA,69.0,2022,Rural,High School,2,Poorest,Male
+MIMAROPA,50.0,2022,Rural,High School,3,Poorest,Male
+MIMAROPA,52.2,2022,Rural,High School,4,Poorer,Male
+MIMAROPA,18.5,2022,Rural,High School,5,Poorer,Male
+NCR,78.9,2022,Urban,High School,0,Richest,Female
+NCR,69.6,2022,Urban,High School,1,Richer,Male
+NCR,59.3,2022,Urban,College,2,Richest,Female
+NCR,37.5,2022,Urban,High School,3,Richer,Male
+NCR,37.5,2022,Urban,High School,4,Richest,Male
+NCR,13.8,2022,Urban,High School,5,Poorer,Female
+Region I,87.0,2022,Rural,High School,0,Middle,Female
+Region I,64.0,2022,Rural,High School,1,Richest,Female
+Region I,62.5,2022,Rural,College,2,Richer,Female
+Region I,57.1,2022,Rural,High School,3,Poorer,Female
+Region I,53.8,2022,Rural,High School,4,Poorer,Male
+Region I,21.7,2022,Rural,College,5,Richer,Female
+Region II,86.4,2022,Rural,College,0,Middle,Male
+Region II,70.0,2022,Rural,High School,1,Poorer,Male
+Region II,61.9,2022,Rural,High School,2,Richest,Male
+Region II,45.5,2022,Rural,High School,3,Poorer,Male
+Region II,55.6,2022,Rural,High School,4,Middle,Female
+Region II,21.7,2022,Rural,High School,5,Richer,Female
+Region III,75.9,2022,Rural,High School,0,Richest,Female
+Region III,67.6,2022,Rural,High School,1,Middle,Male
+Region III,66.7,2022,Urban,High School,2,Richer,Female
+Region III,64.9,2022,Urban,High School,3,Richest,Male
+Region III,48.6,2022,Rural,High School,4,Poorer,Male
+Region III,19.4,2022,Rural,High School,5,Middle,Male
+Region IV-A,80.0,2022,Urban,High School,0,Middle,Female
+Region IV-A,75.0,2022,Urban,High School,1,Poorer,Male
+Region IV-A,59.5,2022,Urban,High School,2,Richer,Female
+Region IV-A,41.9,2022,Urban,High School,3,Middle,Female
+Region IV-A,40.0,2022,Urban,High School,4,Richest,Male
+Region IV-A,20.0,2022,Urban,High School,5,Richer,Female
+Region IX,68.4,2022,Rural,High School,0,Poorest,Male
+Region IX,65.2,2022,Rural,High School,1,Poorest,Female
+Region IX,54.5,2022,Rural,College,2,Middle,Male
+Region IX,66.7,2022,Rural,High School,3,Poorest,Male
+Region IX,36.4,2022,Rural,High School,4,Poorest,Female
+Region IX,30.4,2022,Rural,High School,5,Poorest,Male
+Region V,84.2,2022,Rural,High School,0,Poorest,Female
+Region V,73.1,2022,Rural,High School,1,Poorest,Male
+Region V,65.2,2022,Rural,High School,2,Poorest,Male
+Region V,37.5,2022,Rural,High School,3,Poorest,Female
+Region V,33.3,2022,Rural,High School,4,Poorer,Male
+Region V,16.7,2022,Rural,High School,5,Poorest,Female
+Region VI,94.7,2022,Rural,High School,0,Poorer,Female
+Region VI,78.3,2022,Rural,High School,1,Poorer,Male
+Region VI,60.0,2022,Rural,High School,2,Poorest,Female
+Region VI,52.2,2022,Rural,High School,3,Poorer,Female
+Region VI,52.4,2022,Rural,High School,4,Poorer,Male
+Region VI,26.3,2022,Rural,High School,5,Poorer,Female
+Region VII,96.0,2022,Rural,High School,0,Poorer,Female
+Region VII,76.0,2022,Rural,High School,1,Middle,Female
+Region VII,65.4,2022,Rural,High School,2,Richer,Female
+Region VII,59.3,2022,Rural,High School,3,Richest,Male
+Region VII,44.4,2022,Rural,College,4,Richer,Female
+Region VII,26.9,2022,Rural,High School,5,Poorest,Male
+Region VIII,90.5,2022,Rural,High School,0,Poorest,Male
+Region VIII,88.9,2022,Rural,High School,1,Poorest,Male
+Region VIII,66.7,2022,Rural,High School,2,Poorest,Female
+Region VIII,65.2,2022,Rural,High School,3,Poorer,Male
+Region VIII,40.9,2022,Rural,High School,4,Poorer,Male
+Region VIII,28.0,2022,Rural,High School,5,Poorer,Male
+Region X,80.0,2022,Rural,High School,0,Poorer,Female
+Region X,80.8,2022,Rural,High School,1,Poorest,Male
+Region X,72.7,2022,Rural,High School,2,Poorer,Male
+Region X,61.9,2022,Rural,High School,3,Poorest,Female
+Region X,57.9,2022,Rural,High School,4,Poorer,Male
+Region X,27.3,2022,Rural,High School,5,Richest,Male
+Region XI,73.7,2022,Rural,College,0,Middle,Male
+Region XI,63.2,2022,Rural,High School,1,Poorer,Female
+Region XI,45.8,2022,Rural,High School,2,Poorer,Female
+Region XI,54.5,2022,Rural,College,3,Richer,Female
+Region XI,36.4,2022,Rural,High School,4,Richer,Male
+Region XI,26.3,2022,Rural,High School,5,Middle,Male
+Region XII,73.7,2022,Rural,High School,0,Poorest,Male
+Region XII,77.3,2022,Rural,High School,1,Richer,Male
+Region XII,61.9,2022,Rural,High School,2,Poorest,Male
+Region XII,62.5,2022,Rural,High School,3,Richer,Male
+Region XII,40.0,2022,Rural,High School,4,Poorest,Female
+Region XII,16.7,2022,Rural,High School,5,Poorer,Male
