@@ -617,7 +617,10 @@ function updateCharts(dataObj) {
     let hist = dataObj.history.find(h => h.year === selectedYear);
 
     let pieHeader = document.getElementById("pie-chart-header");
-    if (pieHeader) pieHeader.innerText = `💰 Wealth Distribution (${dataObj.Region || dataObj.displayName})`;
+    if (pieHeader) {
+        let rName = dataObj.Region || dataObj.displayName;
+        pieHeader.innerHTML = `💰 Wealth Distribution<br><span style="font-size: 0.8rem; font-weight: normal; color: var(--text-light);">${rName}</span>`;
+    }
 
     let lineHeader = document.getElementById("line-chart-header");
     if (lineHeader) lineHeader.innerHTML = `📈 Historical Trend`;
