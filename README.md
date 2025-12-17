@@ -21,7 +21,7 @@ An interactive data visualization dashboard monitoring Exclusive Breastfeeding (
 
 * **Interactive Choropleth Map:** Powered by **amCharts 5**, visualizing EBF rates across all administrative regions.
     * **Green:** Good performance (>50%)
-    * **Orange:** Average performance (30-50%)
+    * **Orange:** Average performance (30-40%)
     * **Red:** Critical (<30%)
 * **Historical Trend Analysis:** A **Chart.js** line chart tracking regional progress against the National Average and the 70% Global Nutrition Target.
 * **Demographic Profiling:**
