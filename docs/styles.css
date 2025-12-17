@@ -395,6 +395,11 @@ body {
 .heat-low { background-color: #c0392b; }
 .heat-null { background-color: #ecf0f1; color: #bdc3c7; }
 
+.kpi-sub.highlight {
+    color: var(--primary);
+    font-weight: 600;
+}
+
 
 @media (max-width: 1024px) {
     .main-content {

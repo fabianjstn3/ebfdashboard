@@ -4,7 +4,7 @@ let polygonSeries;
 let myLineChart = null;
 let myPieChart = null;
 let myScatterChart = null;
-let myRadarChart = null;
+let myDemographicChart = null;
 let myBarChart = null;
 let currentSelectedRegionName = null;
 
@@ -43,29 +43,12 @@ function processData(rawCsv) {
         year: year,
         totalEBF: 0,
         count: 0,
-        urbanSum: 0,
-        urbanCount: 0,
-        ruralSum: 0,
-        ruralCount: 0,
-        maleSum: 0,
-        maleCount: 0,
-        femaleSum: 0,
-        femaleCount: 0,
-        wealthCounts: {
-            "Poorest": 0,
-            "Poorer": 0,
-            "Middle": 0,
-            "Richer": 0,
-            "Richest": 0
-        },
-        ageBuckets: {
-            0: [],
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: []
-        }
+        urbanSum: 0, urbanCount: 0,
+        ruralSum: 0, ruralCount: 0,
+        maleSum: 0, maleCount: 0,
+        femaleSum: 0, femaleCount: 0,
+        wealthCounts: { "Poorest": 0, "Poorer": 0, "Middle": 0, "Richer": 0, "Richest": 0 },
+        ageBuckets: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] }
     });
 
     rawCsv.forEach(row => {
@@ -90,22 +73,10 @@ function processData(rawCsv) {
         yObj.totalEBF += val;
         yObj.count++;
 
-        if (row.Type === "Urban") {
-            yObj.urbanSum += val;
-            yObj.urbanCount++;
-        }
-        if (row.Type === "Rural") {
-            yObj.ruralSum += val;
-            yObj.ruralCount++;
-        }
-        if (row.Child_Sex === "Male") {
-            yObj.maleSum += val;
-            yObj.maleCount++;
-        }
-        if (row.Child_Sex === "Female") {
-            yObj.femaleSum += val;
-            yObj.femaleCount++;
-        }
+        if (row.Type === "Urban") { yObj.urbanSum += val; yObj.urbanCount++; }
+        if (row.Type === "Rural") { yObj.ruralSum += val; yObj.ruralCount++; }
+        if (row.Child_Sex === "Male") { yObj.maleSum += val; yObj.maleCount++; }
+        if (row.Child_Sex === "Female") { yObj.femaleSum += val; yObj.femaleCount++; }
 
         if (yObj.wealthCounts.hasOwnProperty(row.Wealth_Index)) {
             yObj.wealthCounts[row.Wealth_Index]++;
@@ -151,6 +122,48 @@ function processData(rawCsv) {
     });
 }
 
+function calculateAverageHistory(historyArr) {
+    if (!historyArr || historyArr.length === 0) return null;
+
+    let count = historyArr.length;
+    let sums = {
+        value: 0, urbanAvg: 0, ruralAvg: 0, maleAvg: 0, femaleAvg: 0
+    };
+    
+    let wealthAgg = { "Poorest": 0, "Poorer": 0, "Middle": 0, "Richer": 0, "Richest": 0 };
+    let ageAgg = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+    historyArr.forEach(h => {
+        sums.value += h.value;
+        sums.urbanAvg += h.urbanAvg;
+        sums.ruralAvg += h.ruralAvg;
+        sums.maleAvg += h.maleAvg;
+        sums.femaleAvg += h.femaleAvg;
+
+        Object.keys(wealthAgg).forEach(k => wealthAgg[k] += (h.wealthDist[k] || 0));
+        Object.keys(ageAgg).forEach(k => ageAgg[k] += (h.ageTrend[k] || 0));
+    });
+
+    const getAvg = (val) => parseFloat((val / count).toFixed(1));
+
+    let finalWealth = {};
+    Object.keys(wealthAgg).forEach(k => finalWealth[k] = getAvg(wealthAgg[k]));
+
+    let finalAge = {};
+    Object.keys(ageAgg).forEach(k => finalAge[k] = getAvg(ageAgg[k]));
+
+    return {
+        year: "All Years",
+        value: getAvg(sums.value),
+        urbanAvg: getAvg(sums.urbanAvg),
+        ruralAvg: getAvg(sums.ruralAvg),
+        maleAvg: getAvg(sums.maleAvg),
+        femaleAvg: getAvg(sums.femaleAvg),
+        wealthDist: finalWealth,
+        ageTrend: finalAge
+    };
+}
+
 function initDashboard(geoJSON, data) {
     let allYears = new Set();
     data.forEach(d => d.history.forEach(h => allYears.add(h.year)));
@@ -166,7 +179,7 @@ function initDashboard(geoJSON, data) {
     createLineChart(nationalObj.history);
     createPieChart();
 
-    createRadarChart(nationalObj, nationalObj);
+    createDemographicChart(nationalObj, nationalObj);
     createScatterChart(data, latestYear);
 
     renderLeaderboard(data, latestYear);
@@ -203,6 +216,12 @@ function setupFilters(years) {
     if (!yearFilter) return;
 
     yearFilter.innerHTML = '';
+
+    let allOpt = document.createElement('option');
+    allOpt.value = 'all';
+    allOpt.innerText = "All Years (Average)";
+    yearFilter.appendChild(allOpt);
+
     years.forEach(y => {
         let opt = document.createElement('option');
         opt.value = y;
@@ -210,29 +229,40 @@ function setupFilters(years) {
         yearFilter.appendChild(opt);
     });
 
+    if(years.length > 0) yearFilter.value = years[0];
+
     yearFilter.addEventListener('change', function() {
-        let selectedYear = parseInt(this.value);
+        let selectedVal = this.value;
 
         globalData.forEach(r => {
-            let yearData = r.history.find(h => h.year === selectedYear);
-            r.value = yearData ? yearData.value : 0;
+            if (selectedVal === 'all') {
+                let avgHist = calculateAverageHistory(r.history);
+                r.value = avgHist ? avgHist.value : 0;
+            } else {
+                let selectedYear = parseInt(selectedVal);
+                let yearData = r.history.find(h => h.year === selectedYear);
+                r.value = yearData ? yearData.value : 0;
+            }
         });
         updateMapVisuals(true);
 
         let nationalObj = calculateNationalAggregate(globalData);
-        calculateNationalKPIs(nationalObj, selectedYear);
 
-        if (currentSelectedRegionName) {
-            let regionData = globalData.find(r => r.Region === currentSelectedRegionName);
-            if (regionData) {
-                updateSidebar(regionData);
-                updateCharts(regionData);
-            }
+        if (selectedVal === 'all') {
+             let avgHist = calculateAverageHistory(nationalObj.history);
+             nationalObj.value = avgHist ? avgHist.value : 0;
         } else {
-
-            updateCharts(nationalObj);
-            resetSelectedRegionKPI();
+             let h = nationalObj.history.find(h => h.year === parseInt(selectedVal));
+             nationalObj.value = h ? h.value : 0;
         }
+
+        calculateNationalKPIs(nationalObj, selectedVal);
+
+        currentSelectedRegionName = null; 
+        
+        updateSidebar(nationalObj);       
+        updateCharts(nationalObj);        
+        resetSelectedRegionKPI();        
     });
 }
 
@@ -242,45 +272,22 @@ function calculateNationalAggregate(regions) {
     let sortedYears = Array.from(allYears).sort((a, b) => a - b);
 
     let history = sortedYears.map(year => {
-        let sumVal = 0,
-            count = 0;
-        let sumUrban = 0,
-            countUrban = 0;
-        let sumRural = 0,
-            countRural = 0;
-        let sumMale = 0,
-            countMale = 0;
-        let sumFemale = 0,
-            countFemale = 0;
-        let wealthAgg = {
-            "Poorest": 0,
-            "Poorer": 0,
-            "Middle": 0,
-            "Richer": 0,
-            "Richest": 0
-        };
-        let ageAgg = {
-            0: [],
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: []
-        };
+        let sumVal = 0, count = 0;
+        let sumUrban = 0, countUrban = 0;
+        let sumRural = 0, countRural = 0;
+        let sumMale = 0, countMale = 0;
+        let sumFemale = 0, countFemale = 0;
+        let wealthAgg = { "Poorest": 0, "Poorer": 0, "Middle": 0, "Richer": 0, "Richest": 0 };
+        let ageAgg = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] };
 
         regions.forEach(r => {
             let h = r.history.find(x => x.year === year);
             if (h) {
-                sumVal += h.value;
-                count++;
-                sumUrban += h.urbanAvg;
-                countUrban++;
-                sumRural += h.ruralAvg;
-                countRural++;
-                sumMale += h.maleAvg;
-                countMale++;
-                sumFemale += h.femaleAvg;
-                countFemale++;
+                sumVal += h.value; count++;
+                sumUrban += h.urbanAvg; countUrban++;
+                sumRural += h.ruralAvg; countRural++;
+                sumMale += h.maleAvg; countMale++;
+                sumFemale += h.femaleAvg; countFemale++;
                 Object.keys(wealthAgg).forEach(k => wealthAgg[k] += (h.wealthDist[k] || 0));
                 Object.keys(ageAgg).forEach(k => ageAgg[k].push(h.ageTrend[k]));
             }
@@ -360,25 +367,13 @@ function createLineChart(nationalHistoryData) {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: {
-                        color: '#dde1e7'
-                    }
+                    beginAtZero: true, max: 100,
+                    grid: { color: '#dde1e7' }
                 },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
+                x: { grid: { display: false } }
             },
             plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        usePointStyle: true
-                    }
-                }
+                legend: { display: true, labels: { usePointStyle: true } }
             }
         }
     });
@@ -406,12 +401,7 @@ function createPieChart() {
             plugins: {
                 legend: {
                     position: 'right',
-                    labels: {
-                        boxWidth: 10,
-                        font: {
-                            size: 10
-                        }
-                    }
+                    labels: { boxWidth: 10, font: { size: 10 } }
                 }
             }
         }
@@ -450,34 +440,23 @@ function createScatterChart(data, year) {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'EBF %'
-                    }
+                    beginAtZero: true, max: 100,
+                    title: { display: true, text: 'EBF %' }
                 },
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Infant Age (Months)'
-                    }
+                    title: { display: true, text: 'Infant Age (Months)' }
                 }
             },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
 }
 
-function createRadarChart(regionData, nationalData) {
-    const ctx = document.getElementById('radarChartCanvas').getContext('2d');
-    if (myRadarChart) myRadarChart.destroy();
+function createDemographicChart(regionData, nationalData) {
+    const ctx = document.getElementById('demographicChartCanvas').getContext('2d');
+    if (myDemographicChart) myDemographicChart.destroy();
 
-    myRadarChart = new Chart(ctx, {
+    myDemographicChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Urban', 'Rural', 'Male', 'Female'],
@@ -500,26 +479,24 @@ function createRadarChart(regionData, nationalData) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
+                y: { beginAtZero: true, max: 100 }
             },
-            plugins: {
-                legend: {
-                    display: true
-                }
-            }
+            plugins: { legend: { display: true } }
         }
     });
 }
 
-function renderLeaderboard(data, year) {
+function renderLeaderboard(data, selectedVal) {
     const ctx = document.getElementById('barChartCanvas');
     if (!ctx) return;
 
     let rankData = data.map(r => {
-            let h = r.history.find(i => i.year === year);
+            let h;
+            if (selectedVal === 'all') {
+                h = calculateAverageHistory(r.history);
+            } else {
+                h = r.history.find(i => i.year === parseInt(selectedVal));
+            }
             return {
                 Region: r.Region,
                 value: h ? h.value : 0
@@ -552,28 +529,17 @@ function renderLeaderboard(data, year) {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: {
-                        color: '#dde1e7'
-                    }
+                    beginAtZero: true, max: 100,
+                    grid: { color: '#dde1e7' }
                 },
-                y: {
-                    grid: {
-                        display: false
-                    }
-                }
+                y: { grid: { display: false } }
             },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
 
     const yearEl = document.getElementById('leaderboard-year');
-    if (yearEl) yearEl.innerText = year;
+    if (yearEl) yearEl.innerText = selectedVal === 'all' ? "All Years (Avg)" : selectedVal;
 }
 
 function renderHeatmap(data) {
@@ -613,8 +579,14 @@ function renderHeatmap(data) {
 function updateCharts(dataObj) {
     if (!dataObj) return;
 
-    let selectedYear = parseInt(document.getElementById('yearFilter').value);
-    let hist = dataObj.history.find(h => h.year === selectedYear);
+    let selectedVal = document.getElementById('yearFilter').value;
+    let hist;
+
+    if (selectedVal === 'all') {
+        hist = calculateAverageHistory(dataObj.history);
+    } else {
+        hist = dataObj.history.find(h => h.year === parseInt(selectedVal));
+    }
 
     let pieHeader = document.getElementById("pie-chart-header");
     if (pieHeader) {
@@ -638,17 +610,23 @@ function updateCharts(dataObj) {
 
     if (hist) updatePieChart(hist);
 
-    if (hist && myRadarChart) {
+    if (hist && myDemographicChart) {
         let nObj = calculateNationalAggregate(globalData);
-        let nHist = nObj.history.find(h => h.year === selectedYear);
+        let nHist;
+
+        if (selectedVal === 'all') {
+            nHist = calculateAverageHistory(nObj.history);
+        } else {
+            nHist = nObj.history.find(h => h.year === parseInt(selectedVal));
+        }
 
         let rData = [hist.urbanAvg, hist.ruralAvg, hist.maleAvg, hist.femaleAvg];
         let nData = nHist ? [nHist.urbanAvg, nHist.ruralAvg, nHist.maleAvg, nHist.femaleAvg] : [0, 0, 0, 0];
 
-        myRadarChart.data.datasets[0].data = rData;
-        myRadarChart.data.datasets[0].label = dataObj.Region || "Selected";
-        myRadarChart.data.datasets[1].data = nData;
-        myRadarChart.update();
+        myDemographicChart.data.datasets[0].data = rData;
+        myDemographicChart.data.datasets[0].label = dataObj.Region || "Selected";
+        myDemographicChart.data.datasets[1].data = nData;
+        myDemographicChart.update();
     }
 
     if (hist && myScatterChart) {
@@ -661,14 +639,20 @@ function updateCharts(dataObj) {
         myScatterChart.update();
     }
 
-    renderLeaderboard(globalData, selectedYear);
+    renderLeaderboard(globalData, selectedVal);
     updateSidebar(dataObj);
     const isDark = document.body.classList.contains('dark-mode');
     updateChartColors(isDark);
 }
 
-function calculateNationalKPIs(natObj, selectedYear) {
-    let hist = natObj.history.find(h => h.year === selectedYear);
+function calculateNationalKPIs(natObj, selectedVal) {
+    let hist;
+    if (selectedVal === 'all') {
+        hist = calculateAverageHistory(natObj.history);
+    } else {
+        hist = natObj.history.find(h => h.year === parseInt(selectedVal));
+    }
+
     let trendEl = document.getElementById('kpi-national-trend');
     
     if (!hist) {
@@ -706,45 +690,24 @@ function calculateNationalKPIs(natObj, selectedYear) {
 
 function createMap(geoJSON, data) {
     const nameMapping = {
-        "National Capital Region": "NCR",
-        "Metropolitan Manila": "NCR",
-        "NCR": "NCR",
-        "Cordillera Administrative Region": "CAR",
-        "CAR": "CAR",
-        "Ilocos Region": "Region I",
-        "Region I": "Region I",
-        "Cagayan Valley": "Region II",
-        "Region II": "Region II",
-        "Central Luzon": "Region III",
-        "Region III": "Region III",
-        "CALABARZON": "Region IV-A",
-        "Region IV-A": "Region IV-A",
-        "MIMAROPA": "MIMAROPA",
-        "Mimaropa": "MIMAROPA",
-        "Region IV-B": "MIMAROPA",
-        "Bicol Region": "Region V",
-        "Region V": "Region V",
-        "Western Visayas": "Region VI",
-        "Region VI": "Region VI",
-        "Central Visayas": "Region VII",
-        "Region VII": "Region VII",
+        "National Capital Region": "NCR", "Metropolitan Manila": "NCR", "NCR": "NCR",
+        "Cordillera Administrative Region": "CAR", "CAR": "CAR",
+        "Ilocos Region": "Region I", "Region I": "Region I",
+        "Cagayan Valley": "Region II", "Region II": "Region II",
+        "Central Luzon": "Region III", "Region III": "Region III",
+        "CALABARZON": "Region IV-A", "Region IV-A": "Region IV-A",
+        "MIMAROPA": "MIMAROPA", "Mimaropa": "MIMAROPA", "Region IV-B": "MIMAROPA",
+        "Bicol Region": "Region V", "Region V": "Region V",
+        "Western Visayas": "Region VI", "Region VI": "Region VI",
+        "Central Visayas": "Region VII", "Region VII": "Region VII",
         "Negros Island Region": "Region VII",
-        "Eastern Visayas": "Region VIII",
-        "Region VIII": "Region VIII",
-        "Zamboanga Peninsula": "Region IX",
-        "Region IX": "Region IX",
-        "Northern Mindanao": "Region X",
-        "Region X": "Region X",
-        "Davao Region": "Region XI",
-        "Region XI": "Region XI",
-        "SOCCSKSARGEN": "Region XII",
-        "Soccsksargen": "Region XII",
-        "Region XII": "Region XII",
-        "Caraga": "Caraga",
-        "Region XIII": "Caraga",
-        "Autonomous Region in Muslim Mindanao": "BARMM",
-        "Bangsamoro Autonomous Region in Muslim Mindanao": "BARMM",
-        "BARMM": "BARMM"
+        "Eastern Visayas": "Region VIII", "Region VIII": "Region VIII",
+        "Zamboanga Peninsula": "Region IX", "Region IX": "Region IX",
+        "Northern Mindanao": "Region X", "Region X": "Region X",
+        "Davao Region": "Region XI", "Region XI": "Region XI",
+        "SOCCSKSARGEN": "Region XII", "Soccsksargen": "Region XII", "Region XII": "Region XII",
+        "Caraga": "Caraga", "Region XIII": "Caraga",
+        "Autonomous Region in Muslim Mindanao": "BARMM", "Bangsamoro Autonomous Region in Muslim Mindanao": "BARMM", "BARMM": "BARMM"
     };
 
     geoJSON.features.forEach(feature => {
@@ -769,29 +732,22 @@ function createMap(geoJSON, data) {
     root.setThemes([am5themes_Animated.new(root)]);
 
     var chart = root.container.children.push(am5map.MapChart.new(root, {
-        panX: "none",
-        panY: "none",
-        wheelY: "none",
+        panX: "none", panY: "none", wheelY: "none",
         projection: am5map.geoMercator()
     }));
 
     polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
-        geoJSON: geoJSON,
-        valueField: "value"
+        geoJSON: geoJSON, valueField: "value"
     }));
 
     polygonSeries.mapPolygons.template.setAll({
         tooltipText: "{displayName}: {value}%",
-        stroke: am5.color("#d1d8e0"),
-        strokeWidth: 1.5,
-        interactive: true,
-        fill: am5.color("#d1d8e0")
+        stroke: am5.color("#d1d8e0"), strokeWidth: 1.5,
+        interactive: true, fill: am5.color("#d1d8e0")
     });
 
     var hoverState = polygonSeries.mapPolygons.template.states.create("hover", {
-        stroke: am5.color("#000000"),
-        strokeWidth: 3,
-        zIndex: 99
+        stroke: am5.color("#000000"), strokeWidth: 3, zIndex: 99
     });
 
     polygonSeries.mapPolygons.template.events.on("click", function(ev) {
@@ -829,10 +785,8 @@ function updateMapVisuals(shouldAnimate = true) {
 
                 if (shouldAnimate) {
                     polygon.animate({
-                        key: "fill",
-                        to: newColor,
-                        duration: 800,
-                        easing: am5.ease.out(am5.ease.cubic)
+                        key: "fill", to: newColor,
+                        duration: 800, easing: am5.ease.out(am5.ease.cubic)
                     });
                 } else {
                     polygon.set("fill", newColor);
@@ -858,7 +812,6 @@ function updateSidebar(data) {
     if (kpiName) kpiName.innerText = finalName;
     let arrowEl = document.getElementById('kpi-region-trend');
     if (arrowEl) {
-
         if (data.Region === "National Average" && !currentSelectedRegionName) {
              arrowEl.style.display = "none"; 
         } else {
@@ -873,14 +826,11 @@ function updateSidebar(data) {
     let valueEl = document.getElementById('region-rate');
     if (infoCard && valueEl) {
         if (data.value >= 50) {
-            infoCard.style.borderLeftColor = "#27ae60";
-            valueEl.style.color = "#27ae60";
+            infoCard.style.borderLeftColor = "#27ae60"; valueEl.style.color = "#27ae60";
         } else if (data.value >= 30) {
-            infoCard.style.borderLeftColor = "#f39c12";
-            valueEl.style.color = "#f39c12";
+            infoCard.style.borderLeftColor = "#f39c12"; valueEl.style.color = "#f39c12";
         } else {
-            infoCard.style.borderLeftColor = "#c0392b";
-            valueEl.style.color = "#c0392b";
+            infoCard.style.borderLeftColor = "#c0392b"; valueEl.style.color = "#c0392b";
         }
     }
 }
@@ -905,15 +855,11 @@ function fadePieChart() {
 function updateChartColors(isDark) {
     let axisTextColor = isDark ? "#ffffff" : "#2b2d42";
     let gridColor = isDark ? "rgba(255, 255, 255, 0.2)" : "#dde1e7";
-
     let regionLineColorDark = "#e0e0e0";
     let regionLineColorLight = "#2c3e50";
-
     let natBarColorDark = "#e0e0e0";
     let natBarColorLight = "#2c3e50";
-
     let regionBarColor = "#f72585";
-
     let mapStrokeNormal = isDark ? am5.color("#000000") : am5.color("#ffffff"); 
     let mapStrokeHover  = isDark ? am5.color("#ffffff") : am5.color("#2c3e50");
 
@@ -937,7 +883,7 @@ function updateChartColors(isDark) {
 
     updateCommon(myLineChart);
     updateCommon(myScatterChart);
-    updateCommon(myRadarChart);
+    updateCommon(myDemographicChart);
     updateCommon(myBarChart);
 
     if (myLineChart) {
@@ -949,41 +895,35 @@ function updateChartColors(isDark) {
         myLineChart.update();
     }
 
-    if (myRadarChart) {
-        const regionDataset = myRadarChart.data.datasets[0];
-        const natDataset = myRadarChart.data.datasets[1];
-
-        if (regionDataset) {
-            regionDataset.backgroundColor = regionBarColor;
-        }
-
-        if (natDataset) {
-            natDataset.backgroundColor = isDark ? natBarColorDark : natBarColorLight;
-        }
-        myRadarChart.update();
+    if (myDemographicChart) {
+        const regionDataset = myDemographicChart.data.datasets[0];
+        const natDataset = myDemographicChart.data.datasets[1];
+        if (regionDataset) regionDataset.backgroundColor = regionBarColor;
+        if (natDataset) natDataset.backgroundColor = isDark ? natBarColorDark : natBarColorLight;
+        myDemographicChart.update();
     }
 
     if (myPieChart) {
         myPieChart.options.plugins.legend.labels.color = axisTextColor;
         myPieChart.data.datasets[0].borderColor = isDark ? '#16213e' : '#ffffff';
         myPieChart.update();
+    }
 
     if(polygonSeries) {
         polygonSeries.mapPolygons.template.set("stroke", mapStrokeNormal);
         let templateHover = polygonSeries.mapPolygons.template.states.lookup("hover");
-            if (templateHover) templateHover.set("stroke", mapStrokeHover);
+        if (templateHover) templateHover.set("stroke", mapStrokeHover);
 
-                polygonSeries.mapPolygons.each(function(polygon) {
-                polygon.set("stroke", mapStrokeNormal);
-                let defaultState = polygon.states.lookup("default");
-                    if (!defaultState) defaultState = polygon.states.create("default", { stroke: mapStrokeNormal });
-                    else defaultState.set("stroke", mapStrokeNormal);
+        polygonSeries.mapPolygons.each(function(polygon) {
+            polygon.set("stroke", mapStrokeNormal);
+            let defaultState = polygon.states.lookup("default");
+            if (!defaultState) defaultState = polygon.states.create("default", { stroke: mapStrokeNormal });
+            else defaultState.set("stroke", mapStrokeNormal);
 
-                    let hoverState = polygon.states.lookup("hover");
-                    if (hoverState) hoverState.set("stroke", mapStrokeHover);
-                    else polygon.states.create("hover", { stroke: mapStrokeHover });
-            });
-        }
+            let hoverState = polygon.states.lookup("hover");
+            if (hoverState) hoverState.set("stroke", mapStrokeHover);
+            else polygon.states.create("hover", { stroke: mapStrokeHover });
+        });
     }
 }
 
@@ -1211,12 +1151,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const downloadRankingsBtn = document.getElementById('downloadRankingsBtn');
     if (downloadRankingsBtn) {
         downloadRankingsBtn.addEventListener("click", function() {
-            let selectedYear = parseInt(document.getElementById('yearFilter').value);
+            let selectedVal = document.getElementById('yearFilter').value;
             let rankedData = [...globalData].map(r => {
-                let h = r.history.find(i => i.year === selectedYear);
+                let h;
+                if (selectedVal === 'all') {
+                    h = calculateAverageHistory(r.history);
+                } else {
+                    h = r.history.find(i => i.year === parseInt(selectedVal));
+                }
                 return {
                     Region: r.Region,
-                    Year: selectedYear,
+                    Year: selectedVal === 'all' ? "All Years (Avg)" : selectedVal,
                     Rate: h ? h.value : 0
                 };
             }).filter(x => x.Rate > 0).sort((a, b) => b.Rate - a.Rate);
@@ -1227,7 +1172,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             var link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `ebf_rankings_${selectedYear}.csv`;
+            link.download = `ebf_rankings_${selectedVal}.csv`;
             link.click();
         });
     }
